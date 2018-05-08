@@ -1,55 +1,33 @@
 class UrlController < ApplicationController
-	before_action :set_url, only: :destroy
-	before_action :find_url, only: :show
-
-  def index
-  	@urls = Url.all
-  end
-
-  def show
-  	redirect_to @url.long
-  end
-
   def new
-  	@url = Url.new
+    @url = Url.new
   end
 
   def create
-  	@url = Url.new(url_params)
+    @url = Url.new(url_params)
 
-  	respond_to do |format|
+    respond_to do |format|
       if @url.save
-        format.html { redirect_to urls_path, notice: 'Url was successfully created.' }
-        format.json { render :show, status: :created, location: @url }
+          format.js { render :s_create, layout: false, content_type: 'text/javascript' }
       else
-        render :new
+          puts @url.errors.full_messages
+          format.js { render :e_create }
       end
     end
   end
 
-  def destroy
-  	@url.destroy
-    respond_to do |format|
-      format.html { redirect_to urls_url, notice: 'Url was successfully destroyed.' }
-      format.json { head :no_content }
-    end
-	end
+  def list
+    @urls = Url.all
+  end
 
-	private
+  def fwd
+    @url = Url.where(short_url: params[:short_url])
+    redirect_to @url[0].long_url
+  end
 
-		def set_url
-      @url = Url.find(params[:id])
-    end
+  private
+  def url_params
+    params.require(:url).permit(:long_url)
+  end
 
-    def url_params
-      params.require(:url).permit(:long)
-    end
-
-    def find_url
-	    	if params[:id].to_i == 0
-	    		@url = Url.find_by(short: params[:id])
-	    	else
-	    		@url = Url.find_by(id: params[:id])
-	    	end
-    end
 end

@@ -16,8 +16,8 @@ ActiveRecord::Schema.define(version: 20180327232559) do
   enable_extension "plpgsql"
 
   create_table "urls", force: :cascade do |t|
-    t.string "shortner"
-    t.string "long"
+    t.string "long_url"
+    t.string "short_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
